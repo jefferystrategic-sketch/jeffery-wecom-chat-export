@@ -1,0 +1,26 @@
+wecom-chat-export — third-party notices
+======================================
+
+This project bundles, under `scripts/`, a modified copy of the WeCom
+(wxSQLite3 AES-128-CBC) database decryption and message-export engine
+originally published by the community as:
+
+  - Source mirror: https://github.com/kenchikuliu/wechat-local-backup-search
+  - Original (DMCA-removed): https://github.com/ylytdeng/wechat-decrypt
+
+Bundled files derived from that project:
+  scripts/wxwork_crypto.py
+  scripts/find_wxwork_keys.py
+  scripts/key_scan_common.py
+  scripts/key_utils.py
+  scripts/decrypt_wxwork_db.py
+  scripts/export_wxwork_messages.py
+  scripts/config.py
+
+The upstream project's license and copyright notices are not separately
+reproduced here because they were not included in the source mirror at the
+time of bundling. Before redistributing or publishing this code, please
+verify the upstream license and retain the original author's notices.
+
+This is an independent community project. It is NOT affiliated with, nor
+endorsed by, Tencent, WeCom (企业微信), or the upstream authors.

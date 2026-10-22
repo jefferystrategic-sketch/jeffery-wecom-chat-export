@@ -1,0 +1,2 @@
+# bat 必须保持 CRLF + GBK 原样：cmd 读 LF 换行的 bat，goto/标签会跳错
+*.bat -text

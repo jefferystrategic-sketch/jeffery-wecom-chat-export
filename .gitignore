@@ -1,0 +1,25 @@
+# 以下全是运行时产物，含密钥或明文聊天记录 —— 切勿提交
+
+# 本机配置（含账号数据目录的绝对路径）
+scripts/config.json
+
+# 解密全部聊天记录的密钥
+scripts/wxwork_keys.json
+
+# 解密后的数据库、导出结果、归档、快照
+scripts/wxwork_decrypted/
+scripts/wxwork_export/
+scripts/wxwork_export_*/
+scripts/wxwork_archive/
+
+# 定时导出的日志、心跳、锁（含账号路径与库的 salt）
+scripts/logs/
+
+# _run_export 补 WAL 时的临时副本
+*.wal_tmp
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
