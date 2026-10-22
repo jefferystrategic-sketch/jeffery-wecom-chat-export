@@ -352,10 +352,22 @@ def save_state(st):
     os.replace(tmp, STATE)
 
 
+def _gbk_ok(ch):
+    try:
+        ch.encode("gbk")
+        return True
+    except UnicodeEncodeError:
+        return False
+
+
 def file_name(meta):
     """类型_内外部_会话名称_会话ID.json，人一眼能看懂，末尾 ID 保证唯一。"""
-    # Windows 文件名不允许的字符换成下划线；群名可能很长，截到 40 字
-    name = re.sub(r'[\\/:*?"<>|\s]', "_", meta.get("name") or "").strip(" ._")[:40]
+    # Windows 文件名不允许的字符换成下划线；群名可能很长，截到 40 字。
+    # GBK 表示不了的字符（表情符号如 ✨）直接去掉：Windows 自带的「压缩(zipped)文件夹」
+    # 按系统编码存文件名，遇到这类字符整个压缩会失败。JSON 内容里的名字不受影响
+    name = "".join(ch for ch in (meta.get("name") or "") if _gbk_ok(ch))
+    name = re.sub(r'[\\/:*?"<>|\s]', "_", name)
+    name = re.sub(r"_{2,}", "_", name).strip(" ._")[:40]
     cid = re.sub(r"[^0-9A-Za-z_\-]", "_", meta["conversation_id"])
     scope = "内部" if meta["scope"] == "internal" else "外部"
     return "_".join([meta["type_label"], scope] + ([name] if name else []) + [cid]) + ".json"
