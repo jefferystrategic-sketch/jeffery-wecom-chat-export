@@ -7,7 +7,8 @@
 
 输出：scripts/wxwork_delta/<批次>/<会话>.json
   批次目录 <时间>_full/ 或 <时间>_incr/，按目录名排序即按时间顺序；
-  里面每个有数据的会话一个 JSON，文件名是会话 ID（冒号换成下划线）。
+  里面每个有数据的会话一个 JSON，文件名形如「单聊_内部_张三_S_168…_168….json」：
+  类型_内外部_会话名称_会话ID，末尾的会话 ID 保证同名群也不会撞。
   增量批次只包含有新消息的会话、且只含新消息；没有新消息就不建批次目录。
 
 每个 JSON 文件头带一份元数据（不是每条消息都带）：
@@ -351,8 +352,13 @@ def save_state(st):
     os.replace(tmp, STATE)
 
 
-def safe_name(cid):
-    return re.sub(r"[^0-9A-Za-z_\-]", "_", cid)
+def file_name(meta):
+    """类型_内外部_会话名称_会话ID.json，人一眼能看懂，末尾 ID 保证唯一。"""
+    # Windows 文件名不允许的字符换成下划线；群名可能很长，截到 40 字
+    name = re.sub(r'[\\/:*?"<>|\s]', "_", meta.get("name") or "").strip(" ._")[:40]
+    cid = re.sub(r"[^0-9A-Za-z_\-]", "_", meta["conversation_id"])
+    scope = "内部" if meta["scope"] == "internal" else "外部"
+    return "_".join([meta["type_label"], scope] + ([name] if name else []) + [cid]) + ".json"
 
 
 def main():
@@ -434,7 +440,7 @@ def produce(cfg):
     shutil.rmtree(tmp, ignore_errors=True)
     os.makedirs(tmp)
     for cid, body in files:
-        with io.open(os.path.join(tmp, safe_name(cid) + ".json"), "w", encoding="utf-8") as f:
+        with io.open(os.path.join(tmp, file_name(body["conversation"])), "w", encoding="utf-8") as f:
             json.dump(body, f, ensure_ascii=False, indent=1)
     os.replace(tmp, final)
 
