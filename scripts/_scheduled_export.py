@@ -191,6 +191,17 @@ def one_round():
     reused = "复用密钥" if "跳过内存扫描" in exp_out else "重新提取密钥"
     log(f"导出完成：新增 {added} 条，用时 {time.time() - t0:.1f}s"
         f"（导出 {t1 - t0:.1f}s + 归档 {time.time() - t1:.1f}s，{reused}）")
+
+    # 交付数据（全量/增量 JSON）。失败不影响归档：它的进度没推进，
+    # 下次有变化时会把没交付的一并补上
+    rc, out = run("_delta_export.py")
+    if rc != 0:
+        log(out)
+        log_state("delta_fail", f"[X] 生成交付数据失败，退出码 {rc}，下次有新消息时会补上")
+    else:
+        line = next((ln.strip() for ln in out.splitlines() if "交付数据" in ln), "")
+        if line and "没有新消息" not in line:
+            log(line)
     # 导完就回到「等待」状态，免得每次导出后紧跟一行「等待新消息」
     with io.open(STATE, "w", encoding="utf-8") as f:
         f.write("idle")

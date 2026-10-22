@@ -95,6 +95,8 @@ if "%RC%"=="0" (
     echo.
     echo       正在并入历史归档 ...
     python -I "%SCRIPTS%\_archive_merge.py"
+    echo       正在生成交付数据（第一次全量，之后增量） ...
+    python -I "%SCRIPTS%\_delta_export.py"
 )
 
 echo.

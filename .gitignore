@@ -11,6 +11,7 @@ scripts/wxwork_decrypted/
 scripts/wxwork_export/
 scripts/wxwork_export_*/
 scripts/wxwork_archive/
+scripts/wxwork_delta/
 
 # 定时导出的日志、心跳、锁（含账号路径与库的 salt）
 scripts/logs/
